@@ -16,8 +16,8 @@
                 <div class="bg-yellow-50 p-4 rounded shadow">
                     <p class="text-sm text-gray-500">Vélo / Marche</p>
                     <p class="text-xl font-semibold text-yellow-700">
-                        🚴 {{ number_format($byType['bike'], 2) }} km /
-                        🚶 {{ number_format($byType['walk'], 2) }} km
+                        {{ number_format($byType['bike'], 2) }} km /
+                        {{ number_format($byType['walk'], 2) }} km
                     </p>
                 </div>
             </div>

@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ActivityController;
+use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 
@@ -23,5 +25,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/activite', [ActivityController::class, 'create'])->name('activities.create');
     Route::post('/activite', [ActivityController::class, 'store'])->name('activities.store');
 });
+
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/', [AdminController::class, 'index'])->name('dashboard');
+    Route::resource('users', UserController::class)->names('users');
+});
+
 
 require __DIR__ . '/auth.php';
