@@ -29,6 +29,9 @@ ENV REAL_IP_HEADER 1
 # Dossier de travail
 WORKDIR /var/www/html
 
+# Installer les dépendances PHP
+RUN composer install --optimize-autoloader --no-interaction --no-dev
+
 # Permissions (optionnel selon tes erreurs)
 RUN chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache \
     && chown -R www-data:www-data /var/www/html
