@@ -1,40 +1,25 @@
 FROM richarvey/nginx-php-fpm:1.7.2
 
-# Copier tous les fichiers du projet
-COPY . /var/www/html
-
-# Définir le dossier racine du site
+# Définir les variables d’environnement
 ENV WEBROOT /var/www/html/public
-
-# Ne pas exécuter composer automatiquement si on gère ça ailleurs
-ENV SKIP_COMPOSER 1
-
-# Laravel config
 ENV APP_ENV=production
 ENV APP_DEBUG=false
-ENV LOG_CHANNEL=stderr
+ENV COMPOSER_ALLOW_SUPERUSER=1
 
-# Autoriser composer en root (utile dans ce conteneur)
-ENV COMPOSER_ALLOW_SUPERUSER 1
+# Copier le code dans le conteneur
+COPY . /var/www/html
 
-# Exécuter les scripts init (start.sh inclus par l'image de base)
-ENV RUN_SCRIPTS 1
+# Installer les extensions PHP nécessaires
+RUN docker-php-ext-install pdo_pgsql bcmath
 
-# PHP affiche les erreurs sur STDERR (log Render)
-ENV PHP_ERRORS_STDERR 1
+# Installer Composer si pas déjà fourni
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Configuration Nginx : utile si tu es derrière un proxy
-ENV REAL_IP_HEADER 1
-
-# Dossier de travail
+# Installer les dépendances
 WORKDIR /var/www/html
-
-# Installer les dépendances PHP
 RUN composer install --optimize-autoloader --no-interaction --no-dev
 
-# Permissions (optionnel selon tes erreurs)
-RUN chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache \
-    && chown -R www-data:www-data /var/www/html
+# Donner les bonnes permissions à Laravel
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
-# Commande de démarrage
 CMD ["/start.sh"]
