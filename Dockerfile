@@ -1,28 +1,29 @@
-# Utilise une image PHP avec les extensions requises
 FROM php:8.2-cli
 
-# Installe les extensions requises (dont bcmath)
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
-    git unzip zip libzip-dev \
-    && docker-php-ext-install pdo pdo_mysql bcmath zip
+    libpq-dev \
+    unzip \
+    git \
+    curl
 
-# Installe Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+# Install PostgreSQL PHP extension
+RUN docker-php-ext-install pdo pdo_pgsql
 
-# Crée et définit le dossier de travail
+# Install Composer
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+# Set working directory
 WORKDIR /var/www/html
 
-# Copie tous les fichiers du projet
+# Copy app files
 COPY . .
 
-# Installe les dépendances
-RUN composer install --optimize-autoloader --no-interaction --no-dev
+# Install PHP dependencies
+RUN composer install --optimize-autoloader --no-interaction --no-scripts
 
-# Rends le script start.sh exécutable
-RUN chmod +x start.sh
+# Expose port
+EXPOSE 10000
 
-# Port exposé pour Laravel
-EXPOSE 8000
-
-# Commande de démarrage
-CMD ["./start.sh"]
+# Start Laravel
+CMD ["bash", "-c", "php artisan migrate --force && php artisan db:seed --force && php artisan serve --host=0.0.0.0 --port=10000"]
