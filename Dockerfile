@@ -1,7 +1,7 @@
-# Utilise l'image PHP 8.1 avec FPM
-FROM php:8.1-fpm
+# Utilise l'image PHP 8.2 avec FPM
+FROM php:8.2-fpm
 
-# Installer les paquets système et les extensions PHP
+# Installer les paquets système et les extensions PHP requises
 RUN apt-get update && apt-get install -y \
     libpq-dev \
     libzip-dev \
