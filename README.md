@@ -68,10 +68,11 @@ DB_PASSWORD=votre_passwd_db
 php artisan migrate --seed
 ```
 
-### 5. Démarrer le serveur
+### 5. Démarrer le serveur et le client
 
 ```bash
 php artisan serve
+npm run dev
 ```
 
 ---
